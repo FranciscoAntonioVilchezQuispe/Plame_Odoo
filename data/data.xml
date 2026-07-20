@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <function name="action_create_plame_config" model="plame.configuration" eval="['RPH']"/>
+
+    <data noupdate="1">
+
+        <record id="plame_rph_sequence" model="ir.sequence">
+            <field name="name">Secuencia PLAME RPH (4ta Categoría)</field>
+            <field name="code">report.plame.rph</field>
+            <field name="prefix">PLAME RPH - </field>
+            <field name="padding">5</field>
+        </record>
+
+    </data>
+
+</odoo>

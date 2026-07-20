@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_import_rph_view_form" model="ir.ui.view">
+        <field name="name">wizard.import.rph.form</field>
+        <field name="model">wizard.import.rph</field>
+        <field name="arch" type="xml">
+            <form string="Carga Masiva de Recibos por Honorarios">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Instrucciones:</strong> Cargue el archivo de recibos (.4ta) y opcionalmente el archivo de prestadores (.ps4) que genera SUNAT o su sistema de origen.
+                        El sistema validará los duplicados por RUC y número de recibo, y registrará los asientos contables y sus correspondientes pagos automáticamente.
+                    </div>
+                    <group>
+                        <group string="Configuración Contable">
+                            <field name="journal_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="expense_account_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="tax_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="payment_journal_id" required="1" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <group string="Archivos a Importar">
+                            <field name="file_rph" filename="file_rph_filename" required="1"/>
+                            <field name="file_rph_filename" invisible="1"/>
+                            <field name="file_prestadores" filename="file_prestadores_filename"/>
+                            <field name="file_prestadores_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_import" string="Importar Recibos" type="object" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_wizard_import_rph" model="ir.actions.act_window">
+        <field name="name">Importación Masiva de RPH</field>
+        <field name="res_model">wizard.import.rph</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

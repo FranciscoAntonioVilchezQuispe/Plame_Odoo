@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="sunat_plame_configuration_tree_view" model="ir.ui.view">
+        <field name="name">sunat.plame.configuration.tree.view</field>
+        <field name="model">plame.configuration</field>
+        <field name="arch" type="xml">
+            <list string="Configuración PLAME">
+                <field name="company_id" column_invisible="True"/>
+                <field name="name"/>
+                <field name="report_type" string="Formato PLAME"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="sunat_plame_configuration_form_view" model="ir.ui.view">
+        <field name="name">sunat.plame.configuration.form.view</field>
+        <field name="model">plame.configuration</field>
+        <field name="mode">primary</field>
+        <field eval="1" name="priority"/>
+        <field name="arch" type="xml">
+            <form string="Configuración PLAME — SUNAT">
+                <sheet>
+
+                    <!-- Cabecera del formulario -->
+                    <div class="plame-config-header">
+                        <div class="plame-config-icon">
+                            <i class="fa fa-cog fa-2x text-white" title="Configuración"/>
+                        </div>
+                        <div>
+                            <h3 class="plame-config-title">Configuración de la Planilla Mensual (PLAME)</h3>
+                            <p class="plame-config-subtitle text-muted mb-0">
+                                Define las cuentas de gastos/honorarios y los diarios de comprobantes para la Planilla Mensual de SUNAT.
+                            </p>
+                        </div>
+                    </div>
+
+                    <group col="1">
+                        <field name="company_id" invisible="1" required="1"/>
+
+                        <group string="Identificación del Formato PLAME">
+                            <group>
+                                <field name="name" string="Nombre"/>
+                                <field name="report_type"
+                                       required="1"
+                                       string="Formato PLAME"
+                                       options="{'no_create': True}"/>
+                            </group>
+                        </group>
+
+                        <!-- Sección Cuentas Contables de Honorarios -->
+                        <div class="plame-config-section">
+                            <div class="plame-config-section-header">
+                                <i class="fa fa-list-alt me-2 text-primary" title="Cuentas"/>
+                                <span class="fw-bold">Cuentas Contables de Gastos / Honorarios (4ta Categoría)</span>
+                                <span class="text-muted ms-2 small">
+                                    — Cuentas asignadas a los servicios de honorarios profesionales
+                                </span>
+                            </div>
+                            <div class="plame-config-section-body">
+                                <field name="accounts_ids" nolabel="1">
+                                    <list editable="bottom" open_form_view="True">
+                                        <field name="code" string="Código"/>
+                                        <field name="name" string="Nombre de Cuenta"/>
+                                        <field name="account_type" string="Tipo"/>
+                                    </list>
+                                </field>
+                            </div>
+                        </div>
+
+                        <!-- Sección Diarios Contables -->
+                        <div class="plame-config-section">
+                            <div class="plame-config-section-header">
+                                <i class="fa fa-book me-2 text-success" title="Diarios"/>
+                                <span class="fw-bold">Diarios de Honorarios / Comprobantes</span>
+                                <span class="text-muted ms-2 small">
+                                    — Diarios utilizados para registrar los Recibos por Honorarios
+                                </span>
+                            </div>
+                            <div class="plame-config-section-body">
+                                <field name="journal_ids" nolabel="1" options="{'no_create': True}"/>
+                            </div>
+                        </div>
+
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

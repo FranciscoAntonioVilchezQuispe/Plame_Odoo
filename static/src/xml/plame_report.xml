@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="l10n_pe_plame.PleReport">
+    <div class="plame-report-screen">
+
+        <!-- ── Encabezado con título y selector de período ──────────────── -->
+        <div class="plame-report-header" t-attf-style="border-left-color: #{bookConfig.color}">
+            <div class="plame-report-header-left">
+                <div class="plame-report-icon" t-attf-style="background: #{bookConfig.color}">
+                    <i t-attf-class="fa #{bookConfig.icon} fa-lg" t-att-title="bookConfig.title || 'Icono de Reporte'"/>
+                </div>
+                <div class="plame-report-title-block">
+                    <div class="plame-report-subtitle" t-esc="bookConfig.subtitle"/>
+                    <h1 class="plame-report-title" t-esc="bookConfig.title"/>
+                </div>
+            </div>
+            <div class="plame-report-period">
+                <label class="plame-period-label">Período</label>
+                <div class="plame-period-selectors">
+                    <select class="form-select form-select-sm" t-on-change="onChangeMonth">
+                        <t t-foreach="[1,2,3,4,5,6,7,8,9,10,11,12]" t-as="m" t-key="m">
+                            <option t-att-value="m" t-att-selected="m === state.month">
+                                <t t-esc="monthsEs[m - 1]"/>
+                            </option>
+                        </t>
+                    </select>
+                    <select class="form-select form-select-sm" t-on-change="onChangeYear">
+                        <t t-foreach="years" t-as="y" t-key="y">
+                            <option t-att-value="y" t-att-selected="y === state.year">
+                                <t t-esc="y"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Parámetros extra: Diario y/o Moneda ──────────────────────── -->
+        <t t-if="bookConfig.needsJournal || bookConfig.needsCurrency">
+            <div class="plame-report-params">
+                <t t-if="bookConfig.needsJournal">
+                    <div class="plame-param-group">
+                        <label class="plame-param-label">
+                            <i class="fa fa-book me-1 text-muted" title="Libro Contable"/>
+                            Diario (Caja / Banco)
+                        </label>
+                        <select class="form-select form-select-sm" t-on-change="onChangeJournal">
+                            <option value="0">— Seleccionar diario —</option>
+                            <t t-foreach="state.journals" t-as="j" t-key="j.id">
+                                <option t-att-value="j.id" t-att-selected="j.id === state.paramJournalId">
+                                    <t t-esc="j.name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                </t>
+                <t t-if="bookConfig.needsCurrency">
+                    <div class="plame-param-group">
+                        <label class="plame-param-label">
+                            <i class="fa fa-money me-1 text-muted" title="Moneda"/>
+                            Moneda
+                        </label>
+                        <select class="form-select form-select-sm" t-on-change="onChangeCurrency">
+                            <t t-foreach="state.currencies" t-as="c" t-key="c.id">
+                                <option t-att-value="c.id" t-att-selected="c.id === state.paramCurrencyId">
+                                    <t t-esc="c.name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                </t>
+            </div>
+        </t>
+
+        <!-- ── Barra de acciones ─────────────────────────────────────────── -->
+        <div class="plame-report-actions">
+            <button class="btn btn-primary plame-btn-action" t-on-click="onGenerar"
+                    t-att-disabled="state.generating">
+                <t t-if="state.generating">
+                    <span class="spinner-border spinner-border-sm"/>
+                    Generando...
+                </t>
+                <t t-else="">
+                    <i class="fa fa-play" title="Generar"/> Generar
+                </t>
+            </button>
+            <button class="btn btn-success plame-btn-action" t-on-click="onDescargarExcel"
+                    t-att-disabled="!state.record || state.downloading || state.generating">
+                <i class="fa fa-file-excel-o" title="Descargar Excel"/> Excel
+            </button>
+            <button class="btn btn-secondary plame-btn-action" t-on-click="onDescargarTxt"
+                    t-att-disabled="!state.record || state.downloading || state.generating">
+                <i class="fa fa-file-text-o" title="Descargar TXT"/> TXT
+            </button>
+            <t t-if="state.downloading">
+                <span class="text-muted small align-self-center">
+                    <span class="spinner-border spinner-border-sm"/>
+                    Preparando descarga...
+                </span>
+            </t>
+        </div>
+
+        <!-- ── Cuerpo ────────────────────────────────────────────────────── -->
+        <div class="plame-report-body">
+
+            <!-- Estado: cargando -->
+            <t t-if="state.loading">
+                <div class="plame-state-center">
+                    <div class="spinner-border text-primary" style="width: 2.5rem; height: 2.5rem;"/>
+                    <p class="mt-3 text-muted fw-semibold">Cargando...</p>
+                </div>
+            </t>
+
+            <!-- Estado: sin registro para el período -->
+            <t t-elif="!state.record">
+                <div class="plame-state-center">
+                    <i class="fa fa-folder-open-o plame-empty-icon" title="Sin registros"/>
+                    <p class="mt-3 fw-semibold text-muted">
+                        Sin reporte para <span t-esc="periodLabel"/>
+                    </p>
+                    <p class="text-muted small">
+                        Haz clic en <strong>Generar</strong> para crear las líneas del período.
+                    </p>
+                </div>
+            </t>
+
+            <!-- Estado: con datos -->
+            <t t-else="">
+
+                <!-- Stat bar + toggle de vista -->
+                <div class="plame-stat-bar">
+                    <div class="plame-stat-item">
+                        <i class="fa fa-tag text-muted" title="Etiqueta de Reporte"/>
+                        <span class="plame-stat-label">Reporte</span>
+                        <span class="plame-stat-value" t-esc="state.record.name"/>
+                    </div>
+                    <div class="plame-stat-item">
+                        <i class="fa fa-calendar text-muted" title="Período"/>
+                        <span class="plame-stat-label">Período</span>
+                        <span class="plame-stat-value">
+                            <t t-esc="state.record.date_from"/> — <t t-esc="state.record.date_to"/>
+                        </span>
+                    </div>
+                    <div class="plame-stat-item">
+                        <i class="fa fa-list-ul text-muted" title="Total de Líneas"/>
+                        <span class="plame-stat-label">Líneas</span>
+                        <span class="plame-stat-value plame-stat-count"
+                              t-esc="state.record.line_count || 0"/>
+                    </div>
+
+                    <!-- Spacer -->
+                    <div style="flex: 1;"/>
+
+                    <!-- Toggle Excel / TXT -->
+                    <div class="plame-view-toggle">
+                        <span class="plame-toggle-label">Vista:</span>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button
+                                t-attf-class="btn #{state.viewMode === 'excel' ? 'btn-dark' : 'btn-outline-secondary'}"
+                                t-on-click="() => this.onSetViewMode('excel')">
+                                <i class="fa fa-table me-1" title="Vista Excel"/>Excel
+                            </button>
+                            <button
+                                t-attf-class="btn #{state.viewMode === 'txt' ? 'btn-dark' : 'btn-outline-secondary'}"
+                                t-on-click="() => this.onSetViewMode('txt')">
+                                <i class="fa fa-file-code-o me-1" title="Vista TXT"/>TXT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <!-- VISTA EXCEL                                             -->
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <t t-if="state.viewMode === 'excel'">
+
+                    <!-- Banda de título estilo Excel -->
+                    <div class="plame-excel-title-band">
+                        <div class="plame-excel-format-name" t-esc="bookConfig.excelTitle"/>
+                        <div class="plame-excel-meta">
+                            <span t-if="companyName">
+                                <i class="fa fa-building-o me-1" title="Compañía"/>
+                                <t t-esc="companyName"/>
+                            </span>
+                            <span>
+                                <i class="fa fa-calendar-o me-1" title="Fecha/Período"/>
+                                Período: <strong t-esc="periodLabel"/>
+                            </span>
+                            <span class="plame-excel-hint">
+                                <i class="fa fa-info-circle me-1" title="Información"/>
+                                Vista previa — mismas columnas que el Excel descargable
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Tabla estilo Excel -->
+                    <div class="plame-table-wrapper">
+                        <table class="plame-table plame-table--excel">
+                            <thead>
+                                <tr>
+                                    <th class="plame-excel-rownum">#</th>
+                                    <t t-foreach="displayColumns" t-as="col" t-key="col.field || col.label">
+                                        <th t-attf-style="min-width: #{col.width || '100px'}; text-align: #{col.align || 'left'}">
+                                            <t t-esc="col.label"/>
+                                        </th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="state.lines.length === 0">
+                                    <tr>
+                                        <td t-att-colspan="displayColumns.length + 1"
+                                            class="text-center text-muted py-5">
+                                            <i class="fa fa-inbox fa-2x d-block mb-2" title="Sin Datos"/>
+                                            Sin líneas generadas para este período
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <t t-foreach="state.lines" t-as="line" t-key="line.id">
+                                        <tr>
+                                            <td class="plame-excel-rownum plame-excel-rownum--cell"
+                                                t-esc="(state.currentPage - 1) * state.limit + lineIndex + 1"/>
+                                            <t t-foreach="displayColumns" t-as="col" t-key="col.field || col.label">
+                                                <td t-attf-style="text-align: #{col.align || 'left'}">
+                                                    <t t-esc="formatColValue(col, line)"/>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </t>
+
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <!-- VISTA TXT                                               -->
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <t t-elif="state.viewMode === 'txt'">
+                    <div class="plame-txt-view">
+                        <div class="plame-txt-header">
+                            <div>
+                                <i class="fa fa-file-text-o me-1" title="Archivo de Texto Plano"/>
+                                <strong>Formato TXT SUNAT</strong>
+                                <span class="text-muted ms-2">— pipe-delimitado (|)</span>
+                            </div>
+                            <span class="plame-txt-warning">
+                                <i class="fa fa-exclamation-triangle me-1" title="Advertencia"/>
+                                Vista aproximada — use "Descargar TXT" para el archivo oficial SUNAT
+                            </span>
+                        </div>
+                        <div class="plame-txt-container">
+                            <t t-if="state.lines.length === 0">
+                                <div class="plame-txt-empty">
+                                    <i class="fa fa-inbox fa-2x d-block mb-2" title="Sin Logs"/>
+                                    Sin líneas para mostrar
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <t t-foreach="state.lines" t-as="line" t-key="line.id">
+                                    <div class="plame-txt-line">
+                                        <span class="plame-txt-linenum"
+                                              t-esc="(state.currentPage - 1) * state.limit + lineIndex + 1"/>
+                                        <span class="plame-txt-content" t-esc="buildTxtLine(line)"/>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Paginación (compartida entre modos) -->
+                <t t-if="state.totalLines > state.limit">
+                    <div class="plame-pagination">
+                        <button class="btn btn-sm btn-outline-secondary"
+                                t-on-click="onPrevPage" t-att-disabled="!hasPrevPage">
+                            <i class="fa fa-chevron-left" title="Página Anterior"/>
+                        </button>
+                        <span class="plame-pagination-info">
+                            Página <strong t-esc="state.currentPage"/> de <strong t-esc="totalPages"/>
+                            &#160;·&#160;
+                            <t t-esc="state.totalLines"/> líneas en total
+                        </span>
+                        <button class="btn btn-sm btn-outline-secondary"
+                                t-on-click="onNextPage" t-att-disabled="!hasNextPage">
+                            <i class="fa fa-chevron-right" title="Página Siguiente"/>
+                        </button>
+                    </div>
+                </t>
+
+            </t>
+        </div><!-- /plame-report-body -->
+
+    </div><!-- /plame-report-screen -->
+</t>
+
+</templates>

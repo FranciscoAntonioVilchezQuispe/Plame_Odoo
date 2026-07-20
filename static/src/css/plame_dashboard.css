@@ -1,0 +1,415 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLAME Dashboard — Tema Dinámico y Adaptable (Light & Dark Mode)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    --plame-bg: var(--o-view-background-color, #f8fafc);
+    --plame-card-bg: var(--o-card-bg, #ffffff);
+    --plame-card-border: var(--o-border-color, rgba(0, 0, 0, 0.08));
+    --plame-text-primary: var(--o-main-text-color, #0f172a);
+    --plame-text-secondary: var(--o-muted-color, #64748b);
+    --plame-header-bg: var(--o-form-background, #ffffff);
+    --plame-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    --plame-input-bg: var(--o-input-bg, #ffffff);
+    --plame-input-border: var(--o-input-border, rgba(0, 0, 0, 0.15));
+}
+
+/* ── Sobreescritura Dinámica para Modo Oscuro ─────────────────────────── */
+[data-color-scheme="dark"],
+[data-bs-theme="dark"],
+.o_web_client.o_dark_mode,
+body.o_dark_mode {
+    --plame-bg: #0f172a;
+    --plame-card-bg: rgba(30, 41, 59, 0.85);
+    --plame-card-border: rgba(255, 255, 255, 0.1);
+    --plame-text-primary: #f8fafc;
+    --plame-text-secondary: #94a3b8;
+    --plame-header-bg: rgba(30, 41, 59, 0.9);
+    --plame-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --plame-input-bg: #1e293b;
+    --plame-input-border: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Sobreescritura Dinámica para Modo Claro ──────────────────────────── */
+[data-color-scheme="light"],
+[data-bs-theme="light"],
+body:not(.o_dark_mode) {
+    --plame-bg: #f8fafc;
+    --plame-card-bg: #ffffff;
+    --plame-card-border: rgba(0, 0, 0, 0.08);
+    --plame-text-primary: #0f172a;
+    --plame-text-secondary: #64748b;
+    --plame-header-bg: #ffffff;
+    --plame-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    --plame-input-bg: #ffffff;
+    --plame-input-border: rgba(0, 0, 0, 0.15);
+}
+
+.plame-dashboard {
+    padding: 24px 32px;
+    background: var(--plame-bg);
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--plame-text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ── Header Principal ─────────────────────────────────────────────────── */
+.plame-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--plame-header-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--plame-card-border);
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--plame-shadow);
+    transition: all 0.3s ease;
+}
+
+.plame-header-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.plame-header-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+    flex-shrink: 0;
+}
+
+.plame-header-title {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--plame-text-primary);
+    letter-spacing: -0.02em;
+}
+
+.plame-header-sub {
+    font-size: 0.88rem;
+    color: var(--plame-text-secondary);
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.plame-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.plame-header-controls select {
+    background: var(--plame-input-bg) !important;
+    color: var(--plame-text-primary) !important;
+    border: 1px solid var(--plame-input-border) !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    outline: none !important;
+    transition: all 0.2s ease;
+}
+
+.plame-header-controls select:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
+}
+
+.plame-header-controls button {
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    padding: 8px 16px !important;
+    transition: all 0.2s ease !important;
+}
+
+.plame-config-btn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+}
+
+.plame-config-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
+}
+
+/* ── Pantalla de Carga ───────────────────────────────────────────────── */
+.plame-loading {
+    text-align: center;
+    padding: 90px 20px;
+    color: var(--plame-text-secondary);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* ── Fila de Resumen (KPI Cards) ─────────────────────────────────────── */
+.plame-summary-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.plame-kpi-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--plame-card-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--plame-card-border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: var(--plame-shadow);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    overflow: hidden;
+}
+
+.plame-kpi-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.plame-kpi-blue { border-top: 3px solid #3b82f6; }
+.plame-kpi-green { border-top: 3px solid #10b981; }
+.plame-kpi-amber { border-top: 3px solid #f59e0b; }
+.plame-kpi-dark { border-top: 3px solid #6366f1; }
+
+.plame-kpi-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.plame-kpi-blue .plame-kpi-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.plame-kpi-green .plame-kpi-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.plame-kpi-amber .plame-kpi-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.plame-kpi-dark .plame-kpi-icon { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+
+.plame-kpi-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.plame-kpi-value {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--plame-text-primary);
+    line-height: 1.2;
+}
+
+.plame-kpi-period {
+    font-size: 1.15rem;
+    color: #f59e0b;
+}
+
+.plame-kpi-label {
+    font-size: 0.82rem;
+    color: var(--plame-text-secondary);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.plame-kpi-arrow {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--plame-text-secondary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.plame-kpi-card:hover .plame-kpi-arrow {
+    right: 14px;
+    color: var(--plame-text-primary);
+}
+
+/* ── Encabezado de Sección ────────────────────────────────────────────── */
+.plame-section-header {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--plame-text-primary);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--plame-card-border);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.plame-section-period {
+    font-size: 0.9rem;
+    color: var(--plame-text-secondary);
+    font-weight: 400;
+}
+
+/* ── Módulos Grid (Tarjetas de Libro PLAME) ──────────────────────────── */
+.plame-books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.plame-book-card {
+    background: var(--plame-card-bg);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 22px;
+    border: 1px solid var(--plame-card-border);
+    box-shadow: var(--plame-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: all 0.25s ease;
+}
+
+.plame-book-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
+}
+
+.plame-book-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.plame-book-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.plame-book-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+}
+
+.plame-badge--done {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.plame-badge--pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.plame-book-code {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #10b981;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.plame-book-name {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--plame-text-primary);
+    margin-top: 2px;
+}
+
+.plame-book-lines {
+    font-size: 0.88rem;
+    color: var(--plame-text-secondary);
+    font-weight: 500;
+    margin-top: 6px;
+}
+
+.plame-book-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.plame-book-actions button {
+    flex: 1;
+    border-radius: 10px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    padding: 8px 12px !important;
+    transition: all 0.2s ease !important;
+}
+
+/* ── Tarjeta del Gráfico ─────────────────────────────────────────────── */
+.plame-chart-card {
+    background: var(--plame-card-bg);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 24px 28px;
+    border: 1px solid var(--plame-card-border);
+    box-shadow: var(--plame-shadow);
+    margin-bottom: 24px;
+}
+
+.plame-chart-wrap {
+    position: relative;
+    height: 320px;
+    margin-top: 20px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+    .plame-summary-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .plame-dashboard {
+        padding: 16px;
+    }
+    
+    .plame-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .plame-summary-row {
+        grid-template-columns: 1fr;
+    }
+
+    .plame-books-grid {
+        grid-template-columns: 1fr;
+    }
+}

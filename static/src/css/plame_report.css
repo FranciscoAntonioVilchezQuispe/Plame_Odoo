@@ -1,0 +1,155 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   PLAME Report Screen — Tema Dinámico y Adaptable (Light & Dark Mode)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    --plame-bg: var(--o-view-background-color, #f8fafc);
+    --plame-card-bg: var(--o-card-bg, #ffffff);
+    --plame-card-border: var(--o-border-color, rgba(0, 0, 0, 0.08));
+    --plame-text-primary: var(--o-main-text-color, #0f172a);
+    --plame-text-secondary: var(--o-muted-color, #64748b);
+    --plame-header-bg: var(--o-form-background, #ffffff);
+    --plame-table-th: #f1f5f9;
+    --plame-table-th-text: #475569;
+    --plame-table-hover: #f8fafc;
+}
+
+[data-color-scheme="dark"],
+[data-bs-theme="dark"],
+.o_web_client.o_dark_mode,
+body.o_dark_mode {
+    --plame-bg: #0f172a;
+    --plame-card-bg: rgba(30, 41, 59, 0.85);
+    --plame-card-border: rgba(255, 255, 255, 0.1);
+    --plame-text-primary: #f8fafc;
+    --plame-text-secondary: #94a3b8;
+    --plame-header-bg: rgba(30, 41, 59, 0.9);
+    --plame-table-th: #1e293b;
+    --plame-table-th-text: #94a3b8;
+    --plame-table-hover: rgba(51, 65, 85, 0.5);
+}
+
+[data-color-scheme="light"],
+[data-bs-theme="light"],
+body:not(.o_dark_mode) {
+    --plame-bg: #f8fafc;
+    --plame-card-bg: #ffffff;
+    --plame-card-border: rgba(0, 0, 0, 0.08);
+    --plame-text-primary: #0f172a;
+    --plame-text-secondary: #64748b;
+    --plame-header-bg: #ffffff;
+    --plame-table-th: #f1f5f9;
+    --plame-table-th-text: #475569;
+    --plame-table-hover: #f8fafc;
+}
+
+.plame-report-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: var(--plame-bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--plame-text-primary);
+    overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ── Encabezado ────────────────────────────────────────────────────────── */
+.plame-report-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 28px;
+    background: var(--plame-header-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--plame-card-border);
+}
+
+.plame-report-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.plame-report-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.35rem;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+}
+
+.plame-report-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--plame-text-primary);
+    margin: 0;
+}
+
+.plame-report-subtitle {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #10b981;
+}
+
+/* ── Periodo & Controles ────────────────────────────────────────────────── */
+.plame-period-selectors select {
+    background: var(--plame-card-bg) !important;
+    color: var(--plame-text-primary) !important;
+    border: 1px solid var(--plame-card-border) !important;
+    border-radius: 10px !important;
+    padding: 6px 12px !important;
+    font-size: 0.88rem !important;
+}
+
+/* ── Tabla de Datos ────────────────────────────────────────────────────── */
+.plame-table-wrapper {
+    flex: 1;
+    overflow: auto;
+    background: var(--plame-card-bg);
+    border-radius: 14px;
+    margin: 16px 28px;
+    border: 1px solid var(--plame-card-border);
+}
+
+.plame-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.plame-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--plame-table-th);
+    color: var(--plame-table-th-text);
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--plame-card-border);
+}
+
+.plame-table tbody tr {
+    border-bottom: 1px solid var(--plame-card-border);
+    transition: background 0.15s ease;
+}
+
+.plame-table tbody tr:hover {
+    background: var(--plame-table-hover);
+}
+
+.plame-table tbody td {
+    padding: 12px 16px;
+    color: var(--plame-text-primary);
+}

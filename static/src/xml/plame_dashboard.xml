@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="l10n_pe_plame.PleDashboard">
+        <div class="plame-dashboard">
+
+            <!-- ── HEADER ───────────────────────────────────────────── -->
+            <div class="plame-header">
+                <div class="plame-header-left">
+                    <div class="plame-header-logo">
+                        <i class="fa fa-id-card-o" title="Planilla Mensual PLAME SUNAT"/>
+                    </div>
+                    <div>
+                        <h2 class="plame-header-title">Dashboard PLAME — Planilla Mensual &amp; RPH</h2>
+                        <t t-if="state.data">
+                            <span class="plame-header-sub">
+                                <i class="fa fa-building-o me-1" title="Compañía"/>
+                                <t t-esc="state.data.company_name"/>
+                                <span class="ms-3 text-muted">RUC: <b t-esc="state.data.company_ruc"/></span>
+                            </span>
+                        </t>
+                    </div>
+                </div>
+                <div class="plame-header-controls">
+                    <select class="form-select form-select-sm" t-on-change="onChangeMonth">
+                        <t t-foreach="months" t-as="m" t-key="m.value">
+                            <option t-att-value="m.value" t-att-selected="m.value === state.month">
+                                <t t-esc="m.label"/>
+                            </option>
+                        </t>
+                    </select>
+                    <select class="form-select form-select-sm" t-on-change="onChangeYear">
+                        <t t-foreach="years" t-as="y" t-key="y">
+                            <option t-att-value="y" t-att-selected="y === state.year">
+                                <t t-esc="y"/>
+                            </option>
+                        </t>
+                    </select>
+                    <button class="btn btn-sm btn-outline-secondary" t-on-click="onRefresh"
+                            t-att-disabled="state.loading">
+                        <i t-attf-class="fa #{state.loading ? 'fa-spinner fa-spin' : 'fa-refresh'}" title="Actualizar"/>
+                    </button>
+                    <button class="btn btn-sm btn-outline-dark plame-config-btn" t-on-click="openConfig">
+                        <i class="fa fa-cog me-1" title="Configuración"/>Configuración
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── LOADING ──────────────────────────────────────────── -->
+            <t t-if="state.loading &amp;&amp; !state.data">
+                <div class="plame-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x mb-3" title="Cargando"/>
+                    <p>Cargando datos del período PLAME...</p>
+                </div>
+            </t>
+
+            <!-- ── ERROR ────────────────────────────────────────────── -->
+            <t t-elif="state.error">
+                <div class="alert alert-danger m-4">
+                    <i class="fa fa-exclamation-triangle me-2" title="Error"/>
+                    <t t-esc="state.error"/>
+                </div>
+            </t>
+
+            <!-- ── CONTENIDO ─────────────────────────────────────────── -->
+            <t t-else="">
+                <t t-if="state.data">
+
+                    <!-- Tarjetas de resumen KPI -->
+                    <div class="plame-summary-row">
+                        <div class="plame-kpi-card plame-kpi-blue" t-on-click="openRphImport">
+                            <div class="plame-kpi-icon"><i class="fa fa-cloud-upload" title="Carga Masiva RPH"/></div>
+                            <div class="plame-kpi-body">
+                                <div class="plame-kpi-value" style="font-size:1.1rem">Carga Masiva</div>
+                                <div class="plame-kpi-label">Importar .4ta y .ps4</div>
+                            </div>
+                        </div>
+                        <div class="plame-kpi-card plame-kpi-green" t-on-click="openRphReport">
+                            <div class="plame-kpi-icon"><i class="fa fa-file-text-o" title="Libro de Honorarios"/></div>
+                            <div class="plame-kpi-body">
+                                <div class="plame-kpi-value">RPH 4ta</div>
+                                <div class="plame-kpi-label">Libro de Honorarios</div>
+                            </div>
+                        </div>
+                        <div class="plame-kpi-card plame-kpi-amber">
+                            <div class="plame-kpi-icon"><i class="fa fa-calendar" title="Período Activo"/></div>
+                            <div class="plame-kpi-body">
+                                <div class="plame-kpi-value plame-kpi-period"><t t-esc="state.data.period_label"/></div>
+                                <div class="plame-kpi-label">Período Activo</div>
+                            </div>
+                        </div>
+                        <div class="plame-kpi-card plame-kpi-dark plame-kpi-config" t-on-click="openConfig">
+                            <div class="plame-kpi-icon"><i class="fa fa-cog" title="Ajustes"/></div>
+                            <div class="plame-kpi-body">
+                                <div class="plame-kpi-value" style="font-size:1rem; line-height:1.4">Configurar</div>
+                                <div class="plame-kpi-label">Ajustes PLAME</div>
+                            </div>
+                            <i class="fa fa-arrow-right plame-kpi-arrow" title="Ver Detalles"/>
+                        </div>
+                    </div>
+
+                    <!-- Accesos a Módulos PLAME -->
+                    <div class="plame-section-header">
+                        <i class="fa fa-id-card-o me-2" title="Sección PLAME"/>
+                        Planilla Mensual — 4ta Categoría (Recibos por Honorarios)
+                        <span class="plame-section-period ms-2 text-muted">
+                            — <t t-esc="state.data.period_label"/>
+                        </span>
+                    </div>
+
+                    <div class="plame-books-grid">
+                        <t t-foreach="state.data.books" t-as="book" t-key="book.type">
+                            <div t-attf-class="plame-book-card #{book.generated ? 'plame-book--done' : 'plame-book--pending'}">
+                                <div class="plame-book-top">
+                                    <div class="plame-book-icon" t-attf-style="background:#{book.color}">
+                                        <i t-attf-class="fa #{book.icon}" t-att-title="book.name"/>
+                                    </div>
+                                    <span t-attf-class="plame-book-badge #{book.generated ? 'plame-badge--done' : 'plame-badge--pending'}">
+                                        <t t-if="book.generated">
+                                            <i class="fa fa-check me-1" title="Generado"/>Generado
+                                        </t>
+                                        <t t-else="">
+                                            <i class="fa fa-clock-o me-1" title="Pendiente"/>Pendiente
+                                        </t>
+                                    </span>
+                                </div>
+
+                                <div class="plame-book-meta">
+                                    <div class="plame-book-code"><t t-esc="book.type"/></div>
+                                    <div class="plame-book-name"><t t-esc="book.name"/></div>
+                                    <t t-if="book.generated">
+                                        <div class="plame-book-lines">
+                                            <i class="fa fa-list-ul me-1" title="Líneas Registradas"/>
+                                            <t t-esc="book.line_count"/> recibos registrados
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="plame-book-lines text-muted">Sin datos generados para este período</div>
+                                    </t>
+                                </div>
+
+                                <div class="plame-book-actions">
+                                    <button class="btn btn-sm btn-primary" t-on-click="openRphReport">
+                                        <i class="fa fa-eye me-1" title="Ver Libro de Honorarios"/>Ver Libro RPH
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" t-on-click="openRphImport">
+                                        <i class="fa fa-upload me-1" title="Carga Masiva"/>Importar RPH
+                                    </button>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Gráfico -->
+                    <div class="plame-chart-card">
+                        <div class="plame-section-header mb-0">
+                            <i class="fa fa-bar-chart me-2" title="Estadísticas"/>
+                            Honorarios de 4ta Categoría &amp; Retenciones (8%) — Últimos 6 meses
+                        </div>
+                        <div class="plame-chart-wrap">
+                            <canvas t-ref="honorariosChart"/>
+                        </div>
+                    </div>
+
+                </t>
+            </t>
+
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="sunat_plame_configuration_action" model="ir.actions.act_window">
+        <field name="name">Configuración PLAME</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">plame.configuration</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="sunat_plame_configuration_tree_view"/>
+    </record>
+
+    <!-- Menú Aplicación Raíz SUNAT PLAME -->
+    <menuitem id="menu_action_sunat_plame"
+              name="SUNAT PLAME"
+              web_icon="l10n_pe_plame,static/description/icon.png"
+              sequence="4"/>
+
+    <!-- Menú Dashboard -->
+    <menuitem id="plame_dashboard_menu"
+              name="Dashboard PLAME"
+              action="plame_dashboard_action"
+              parent="menu_action_sunat_plame"
+              sequence="0"/>
+
+    <!-- Menú Categoría 4ta Categoría / Honorarios -->
+    <menuitem id="menu_report_plame_4ta"
+              name="Recibos por Honorarios (4ta)"
+              parent="menu_action_sunat_plame"
+              sequence="1"/>
+
+    <menuitem id="menu_wizard_import_rph"
+              name="Importar RPH (Carga Masiva .4ta / .ps4)"
+              parent="menu_report_plame_4ta"
+              sequence="10"
+              action="action_wizard_import_rph"/>
+
+    <menuitem id="menu_report_plame_rph"
+              name="Libro de Honorarios (RPH)"
+              parent="menu_report_plame_4ta"
+              sequence="20"
+              action="action_report_plame_rph"/>
+
+    <!-- Menú Configuración -->
+    <menuitem id="sunat_plame_configuration_menu"
+              name="Configuración PLAME"
+              action="sunat_plame_configuration_action"
+              parent="menu_action_sunat_plame"
+              sequence="2"/>
+
+</odoo>

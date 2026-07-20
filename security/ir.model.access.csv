@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_archivo_temporal,access.archivo.temporal,model_archivo_temporal,base.group_user,1,1,1,1
+access_plame_configuration,access.plame.configuration,model_plame_configuration,base.group_user,1,1,1,1
+access_wizard_import_rph,access.wizard.import.rph,model_wizard_import_rph,base.group_user,1,1,1,1
+access_report_plame_rph,access.report.plame.rph,model_report_plame_rph,base.group_user,1,1,1,1
+access_report_plame_rph_line,access.report.plame.rph.line,model_report_plame_rph_line,base.group_user,1,1,1,1

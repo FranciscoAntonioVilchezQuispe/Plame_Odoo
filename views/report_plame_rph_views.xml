@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Lista de Líneas -->
+    <record id="view_report_plame_rph_line_list" model="ir.ui.view">
+        <field name="name">report.plame.rph.line.list</field>
+        <field name="model">report.plame.rph.line</field>
+        <field name="arch" type="xml">
+            <list string="Detalle de Honorarios" create="false" edit="false" delete="false">
+                <field name="ruc"/>
+                <field name="partner_name"/>
+                <field name="document_number"/>
+                <field name="date_invoice"/>
+                <field name="date_payment"/>
+                <field name="amount_total" sum="Total Bruto"/>
+                <field name="amount_retention" sum="Total Retención"/>
+                <field name="amount_net" sum="Total Neto"/>
+                <field name="state_payment" decoration-success="state_payment == 'paid'" decoration-warning="state_payment == 'not_paid'" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Lista de Reporte -->
+    <record id="view_report_plame_rph_list" model="ir.ui.view">
+        <field name="name">report.plame.rph.list</field>
+        <field name="model">report.plame.rph</field>
+        <field name="arch" type="xml">
+            <list string="Libro de Honorarios y PLAME RPH">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="total_honorarios" sum="Total Bruto"/>
+                <field name="total_retenciones" sum="Total Retención"/>
+                <field name="total_neto" sum="Total Neto"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Formulario de Reporte -->
+    <record id="view_report_plame_rph_form" model="ir.ui.view">
+        <field name="name">report.plame.rph.form</field>
+        <field name="model">report.plame.rph</field>
+        <field name="arch" type="xml">
+            <form string="Libro de Honorarios y PLAME RPH">
+                <header>
+                    <button name="generar" string="Generar Reporte" type="object" class="btn-primary"/>
+                    <button name="descargar_excel" string="Descargar Excel" type="object" class="btn-success" invisible="not line_ids"/>
+                    <button name="descargar_txt_4ta" string="Descargar .4ta (PLAME)" type="object" class="btn-info" invisible="not line_ids"/>
+                    <button name="descargar_txt_ps4" string="Descargar .ps4 (Prestadores)" type="object" class="btn-info" invisible="not line_ids"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Periodo">
+                            <field name="date_from" required="1"/>
+                            <field name="date_to" readonly="1"/>
+                        </group>
+                        <group string="Datos de la Empresa">
+                            <field name="company_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="currency_id" readonly="1" options="{'no_open': True}"/>
+                        </group>
+                    </group>
+                    <group class="oe_subtotal_footer oe_right" colspan="2" name="totales">
+                        <field name="total_honorarios" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="total_retenciones" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                            <label for="total_neto"/>
+                        </div>
+                        <field name="total_neto" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                    <notebook>
+                        <page string="Detalle de Recibos por Honorarios">
+                            <field name="line_ids" readonly="1">
+                                <list string="Detalle" create="0" delete="0" edit="0">
+                                    <field name="ruc"/>
+                                    <field name="partner_name"/>
+                                    <field name="document_number"/>
+                                    <field name="date_invoice"/>
+                                    <field name="date_payment"/>
+                                    <field name="amount_total" sum="Total Bruto"/>
+                                    <field name="amount_retention" sum="Total Retención"/>
+                                    <field name="amount_net" sum="Total Neto"/>
+                                    <field name="state_payment" decoration-success="state_payment == 'paid'" decoration-warning="state_payment == 'not_paid'" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Búsqueda -->
+    <record id="view_report_plame_rph_search" model="ir.ui.view">
+        <field name="name">report.plame.rph.search</field>
+        <field name="model">report.plame.rph</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="date_from"/>
+                <filter string="Compañía" name="group_company" context="{'group_by': 'company_id'}"/>
+            </search>
+        </field>
+    </record>
+
+
+
+    <!-- Acción del Reporte -->
+    <record id="action_report_plame_rph" model="ir.actions.act_window">
+        <field name="name">Libro de Honorarios y PLAME</field>
+        <field name="res_model">report.plame.rph</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_report_plame_rph_search"/>
+    </record>
+</odoo>

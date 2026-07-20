@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="view_account_form_inherit_l10n_pe_plame" model="ir.ui.view">
+        <field name="name">view.account.form.inherit.l10n.pe.plame</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='account_type']" position="after">
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
